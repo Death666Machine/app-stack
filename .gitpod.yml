@@ -1,0 +1,51 @@
+# .gitpod.yml
+
+tasks:
+  - name: Install Bun and Setup Workspaces
+    init: |
+      # Install Bun
+      curl https://bun.sh/install | bash
+      echo 'export BUN_INSTALL="$HOME/.bun"' >> ~/.bashrc
+      echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> ~/.bashrc
+      source ~/.bashrc
+
+      # Install all dependencies using Bun's workspace support
+      bun install
+
+      # Optionally, install additional tools like Lerna or Turborepo if needed
+      # bun add lerna -W
+
+    command: |
+      # Run development tasks for all packages/services in the monorepo
+      bun run dev
+
+  - name: Setup Environment Variables
+    init: |
+      echo "Setting up environment variables"
+      cp .env.example .env
+    command: |
+      echo "Environment ready"
+
+  - name: Run Tests Across Monorepo
+    command: |
+      bun run test
+
+ports:
+  - port: 3000
+    onOpen: open-browser
+
+vscode:
+  extensions:
+    - dbaeumer.vscode-eslint
+    - esbenp.prettier-vscode
+    - GitHub.vscode-pull-request-github
+    - ritwickdey.LiveServer
+    - claude-dev.vscode-extension   # Claude-dev VS Code extension
+    - continuedev.continue-vscode   # Continue VS Code extension
+    - v0.ai-assistant               # v0 AI assistant VS Code extension
+
+github:
+  prebuilds:
+    master: true
+    branches: true
+    pullRequests: true
